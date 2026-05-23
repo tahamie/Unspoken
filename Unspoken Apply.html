@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNSPOKEN — Apply</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --navy:    #08111d;
+    --navy2:   #0d1a28;
+    --crimson: #d42b32;
+    --gold:    #e8b84b;
+    --gold2:   #ffd97a;
+    --cream:   #f5f0e5;
+    --white:   #ffffff;
+    --grey:    #c8bfb0;
+    --dim:     #7a7268;
+    --border:  rgba(255,255,255,0.09);
+    --card:    rgba(255,255,255,0.04);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: #04090f;
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── GRAIN ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0.6;
+  }
+
+  /* ── AMBIENT GLOW ── */
+  .ambient {
+    position: fixed;
+    top: -40vh; left: 50%;
+    transform: translateX(-50%);
+    width: 80vw; height: 80vh;
+    background: radial-gradient(ellipse, rgba(232,184,75,0.05) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  /* ── TOP BAR ── */
+  .top-bar {
+    height: 4px;
+    background: linear-gradient(90deg, var(--crimson) 0%, var(--gold) 35%, var(--gold2) 50%, var(--gold) 65%, var(--crimson) 100%);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  /* ── WRAPPER ── */
+  .wrapper {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 60px 24px 80px;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    text-align: center;
+    margin-bottom: 56px;
+    animation: fadeUp 0.7s ease both;
+  }
+
+  .header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    border: 1px solid rgba(232,184,75,0.4);
+    background: rgba(232,184,75,0.06);
+    margin-bottom: 24px;
+  }
+
+  .header-badge span {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+
+  .title-urdu {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-style: italic;
+    color: rgba(232,184,75,0.55);
+    margin-bottom: 4px;
+  }
+
+  .title-main {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 96px;
+    line-height: 0.88;
+    color: var(--white);
+    letter-spacing: 8px;
+    margin-bottom: 16px;
+  }
+
+  .header-divider {
+    width: 120px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 20px auto;
+  }
+
+  .header-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 19px;
+    font-style: italic;
+    color: var(--grey);
+    line-height: 1.5;
+  }
+
+  /* ── FORM CARD ── */
+  .form-card {
+    background: var(--navy2);
+    border: 1px solid var(--border);
+    border-top: 3px solid rgba(232,184,75,0.5);
+    padding: 48px 44px 52px;
+    animation: fadeUp 0.7s 0.15s ease both;
+  }
+
+  .form-section-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 5px;
+    color: var(--crimson);
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .form-section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(212,43,50,0.25);
+  }
+
+  /* ── FIELD ── */
+  .field {
+    margin-bottom: 28px;
+  }
+
+  label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  label .required {
+    color: var(--crimson);
+    margin-left: 3px;
+  }
+
+  input[type="text"],
+  input[type="tel"],
+  input[type="url"] {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-bottom: 2px solid rgba(232,184,75,0.3);
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+    padding: 14px 18px;
+    outline: none;
+    transition: all 0.2s;
+    -webkit-appearance: none;
+  }
+
+  input[type="text"]:focus,
+  input[type="tel"]:focus,
+  input[type="url"]:focus {
+    border-color: rgba(255,255,255,0.15);
+    border-bottom-color: var(--gold);
+    background: rgba(255,255,255,0.065);
+  }
+
+  input::placeholder { color: var(--dim); font-weight: 300; }
+
+  /* ── ROLE SELECT ── */
+  .role-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .role-option {
+    position: relative;
+  }
+
+  .role-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0; height: 0;
+  }
+
+  .role-label {
+    display: flex;
+    flex-direction: column;
+    padding: 14px 18px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-left: 3px solid rgba(232,184,75,0.2);
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+
+  .role-label:hover {
+    background: rgba(255,255,255,0.06);
+    border-left-color: rgba(232,184,75,0.5);
+  }
+
+  .role-option input[type="radio"]:checked + .role-label {
+    background: rgba(232,184,75,0.08);
+    border-color: rgba(232,184,75,0.3);
+    border-left-color: var(--gold);
+  }
+
+  .role-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 3px;
+  }
+
+  .role-option input[type="radio"]:checked + .role-label .role-name {
+    color: var(--gold);
+  }
+
+  .role-meta {
+    font-size: 11px;
+    font-weight: 300;
+    color: var(--dim);
+  }
+
+  /* check indicator */
+  .role-label::after {
+    content: '';
+    position: absolute;
+    top: 10px; right: 12px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    border: 1px solid rgba(232,184,75,0.3);
+    transition: all 0.2s;
+  }
+
+  .role-option input[type="radio"]:checked + .role-label::after {
+    background: var(--gold);
+    border-color: var(--gold);
+    box-shadow: 0 0 8px rgba(232,184,75,0.4);
+  }
+
+  /* ── SUBMIT ── */
+  .submit-btn {
+    width: 100%;
+    padding: 18px 24px;
+    background: linear-gradient(135deg, rgba(212,43,50,0.85), rgba(180,30,36,0.9));
+    border: 1px solid rgba(212,43,50,0.6);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s;
+    margin-top: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .submit-btn:hover {
+    background: linear-gradient(135deg, rgba(212,43,50,1), rgba(200,35,42,1));
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(212,43,50,0.3);
+  }
+
+  .submit-btn:active { transform: translateY(0); }
+
+  .submit-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* ── SUCCESS STATE ── */
+  .success-state {
+    display: none;
+    text-align: center;
+    padding: 48px 24px;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .success-icon {
+    width: 64px; height: 64px;
+    border: 2px solid var(--gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+  }
+
+  .success-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    color: var(--white);
+    letter-spacing: 4px;
+    margin-bottom: 12px;
+  }
+
+  .success-msg {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-style: italic;
+    color: var(--grey);
+    line-height: 1.6;
+  }
+
+  /* ── FOOTER ── */
+  .site-footer {
+    text-align: center;
+    margin-top: 48px;
+    animation: fadeUp 0.7s 0.3s ease both;
+  }
+
+  .footer-divider {
+    width: 60px;
+    height: 1px;
+    background: rgba(232,184,75,0.25);
+    margin: 0 auto 20px;
+  }
+
+  .footer-text {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--dim);
+    text-transform: uppercase;
+  }
+
+  .footer-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    font-style: italic;
+    color: rgba(232,184,75,0.4);
+    margin-top: 8px;
+  }
+
+  /* ── ERROR ── */
+  .field-error {
+    font-size: 11px;
+    color: var(--crimson);
+    margin-top: 6px;
+    display: none;
+  }
+
+  input.error {
+    border-bottom-color: var(--crimson) !important;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 560px) {
+    .wrapper { padding: 40px 16px 60px; }
+    .title-main { font-size: 72px; }
+    .form-card { padding: 32px 24px 40px; }
+    .role-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="ambient"></div>
+<div class="top-bar"></div>
+
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-badge">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e8b84b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+      </svg>
+      <span>Casting Call — Karachi</span>
+    </div>
+    <div class="title-urdu">ان کہی باتیں</div>
+    <div class="title-main">UNSPOKEN</div>
+    <div class="header-divider"></div>
+    <div class="header-sub">
+      An Urdu short film about pride, silence,<br>and the things families never say out loud.
+    </div>
+  </header>
+
+  <!-- FORM -->
+  <div class="form-card" id="formCard">
+    <div class="form-section-label">Your Application</div>
+
+    <form id="castingForm" novalidate>
+
+      <!-- NAME -->
+      <div class="field">
+        <label>Full Name <span class="required">*</span></label>
+        <input type="text" id="name" placeholder="Your full name" autocomplete="name">
+        <div class="field-error" id="nameError">Please enter your name.</div>
+      </div>
+
+      <!-- PHONE -->
+      <div class="field">
+        <label>WhatsApp Number <span class="required">*</span></label>
+        <input type="tel" id="phone" placeholder="+92 ___ _______" autocomplete="tel">
+        <div class="field-error" id="phoneError">Please enter a valid phone number.</div>
+      </div>
+
+      <!-- PORTFOLIO -->
+      <div class="field">
+        <label>Portfolio / Reel Link <span class="required">*</span></label>
+        <input type="url" id="portfolio" placeholder="https://youtube.com/... or Google Drive link">
+        <div class="field-error" id="portfolioError">Please enter a valid link.</div>
+      </div>
+
+      <!-- ROLE -->
+      <div class="field">
+        <label>Role Applying For <span class="required">*</span></label>
+        <div class="role-grid">
+
+          <div class="role-option">
+            <input type="radio" name="role" id="r1" value="Bashir — Father (50–60, Male)">
+            <label class="role-label" for="r1">
+              <span class="role-name">Bashir</span>
+              <span class="role-meta">Father · 50–60 · Male</span>
+            </label>
+          </div>
+
+          <div class="role-option">
+            <input type="radio" name="role" id="r2" value="Sakina — Mother (44–54, Female)">
+            <label class="role-label" for="r2">
+              <span class="role-name">Sakina</span>
+              <span class="role-meta">Mother · 44–54 · Female</span>
+            </label>
+          </div>
+
+          <div class="role-option">
+            <input type="radio" name="role" id="r3" value="Arman — Son (27–35, Male)">
+            <label class="role-label" for="r3">
+              <span class="role-name">Arman</span>
+              <span class="role-meta">Son · 27–35 · Male</span>
+            </label>
+          </div>
+
+          <div class="role-option">
+            <input type="radio" name="role" id="r4" value="Zara — Bahu (23–31, Female)">
+            <label class="role-label" for="r4">
+              <span class="role-name">Zara</span>
+              <span class="role-meta">Bahu · 23–31 · Female</span>
+            </label>
+          </div>
+
+          <div class="role-option">
+            <input type="radio" name="role" id="r5" value="Zayn — Pota (4–7, Male)">
+            <label class="role-label" for="r5">
+              <span class="role-name">Zayn</span>
+              <span class="role-meta">Pota · 4–7 · Male</span>
+            </label>
+          </div>
+
+          <div class="role-option">
+            <input type="radio" name="role" id="r6" value="Landlord (47–57, Male)">
+            <label class="role-label" for="r6">
+              <span class="role-name">Landlord</span>
+              <span class="role-meta">47–57 · Male</span>
+            </label>
+          </div>
+
+        </div>
+        <div class="field-error" id="roleError">Please select a role.</div>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">
+        Submit Application
+      </button>
+
+    </form>
+
+    <!-- SUCCESS -->
+    <div class="success-state" id="successState">
+      <div class="success-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#e8b84b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+      <div class="success-title">Application Sent</div>
+      <div class="success-msg">
+        Thank you. We have received your application<br>and will be in touch if you're shortlisted.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-divider"></div>
+    <div class="footer-text">Karachi, Pakistan · Urdu Short Film</div>
+    <div class="footer-quote">"The less we explain it — the more it will feel."</div>
+  </footer>
+
+</div>
+
+<script>
+  const form = document.getElementById('castingForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const successState = document.getElementById('successState');
+
+  function showError(fieldId, errorId, show) {
+    const field = document.getElementById(fieldId);
+    const error = document.getElementById(errorId);
+    if (show) {
+      field && field.classList.add('error');
+      error.style.display = 'block';
+    } else {
+      field && field.classList.remove('error');
+      error.style.display = 'none';
+    }
+  }
+
+  function validate() {
+    let valid = true;
+
+    const name = document.getElementById('name').value.trim();
+    if (!name) { showError('name', 'nameError', true); valid = false; }
+    else showError('name', 'nameError', false);
+
+    const phone = document.getElementById('phone').value.trim();
+    if (!phone || phone.length < 7) { showError('phone', 'phoneError', true); valid = false; }
+    else showError('phone', 'phoneError', false);
+
+    const portfolio = document.getElementById('portfolio').value.trim();
+    if (!portfolio || !portfolio.startsWith('http')) { showError('portfolio', 'portfolioError', true); valid = false; }
+    else showError('portfolio', 'portfolioError', false);
+
+    const role = document.querySelector('input[name="role"]:checked');
+    if (!role) { document.getElementById('roleError').style.display = 'block'; valid = false; }
+    else document.getElementById('roleError').style.display = 'none';
+
+    return valid;
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!validate()) return;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting...';
+
+    const data = {
+      name: document.getElementById('name').value.trim(),
+      phone: document.getElementById('phone').value.trim(),
+      portfolio: document.getElementById('portfolio').value.trim(),
+      role: document.querySelector('input[name="role"]:checked').value,
+      submitted_at: new Date().toISOString(),
+    };
+
+    // ── DATABASE HOOK ──────────────────────────────────────
+    // Replace this block with your actual DB call when ready.
+    // e.g. Supabase: await supabase.from('applications').insert(data)
+    // e.g. Firebase: await addDoc(collection(db, 'applications'), data)
+    // For now: logs to console + shows success.
+    console.log('Application:', data);
+    await new Promise(r => setTimeout(r, 800)); // simulate network
+    // ────────────────────────────────────────────────────────
+
+    form.style.display = 'none';
+    successState.style.display = 'block';
+  });
+</script>
+
+</body>
+</html>
