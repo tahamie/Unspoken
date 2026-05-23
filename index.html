@@ -564,7 +564,7 @@
     else showError('phone', 'phoneError', false);
 
     const portfolio = document.getElementById('portfolio').value.trim();
-    if (!portfolio || !portfolio.startsWith('http')) { showError('portfolio', 'portfolioError', true); valid = false; }
+    if (!portfolio || portfolio.length < 5) { showError('portfolio', 'portfolioError', true); valid = false; }
     else showError('portfolio', 'portfolioError', false);
 
     const role = document.querySelector('input[name="role"]:checked');
