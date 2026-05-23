@@ -574,6 +574,28 @@
     return valid;
   }
 
+  // ── SUPABASE CONFIG ───────────────────────────────────────
+  const SUPABASE_URL  = 'https://vtnapucgwxfzrpfhpxpc.supabase.co';
+  const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ0bmFwdWNnd3hmenJwZmhweHBjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1MjgzNjksImV4cCI6MjA5NTEwNDM2OX0.ZO96QiuPL058lZcQ_1AQOvhUxD0GTR7DHHr5qR-P35w';
+
+  async function insertToSupabase(data) {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/applications`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON,
+        'Authorization': `Bearer ${SUPABASE_ANON}`,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify(data)
+    });
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error(err);
+    }
+  }
+  // ─────────────────────────────────────────────────────────
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!validate()) return;
@@ -582,27 +604,25 @@
     submitBtn.textContent = 'Submitting...';
 
     const data = {
-      name: document.getElementById('name').value.trim(),
-      phone: document.getElementById('phone').value.trim(),
-      portfolio: document.getElementById('portfolio').value.trim(),
-      role: document.querySelector('input[name="role"]:checked').value,
+      name:         document.getElementById('name').value.trim(),
+      phone:        document.getElementById('phone').value.trim(),
+      portfolio:    document.getElementById('portfolio').value.trim(),
+      role:         document.querySelector('input[name="role"]:checked').value,
       submitted_at: new Date().toISOString(),
     };
 
-    // ── DATABASE HOOK ──────────────────────────────────────
-    // Replace this block with your actual DB call when ready.
-    // e.g. Supabase: await supabase.from('applications').insert(data)
-    // e.g. Firebase: await addDoc(collection(db, 'applications'), data)
-    // For now: logs to console + shows success.
-    console.log('Application:', data);
-    await new Promise(r => setTimeout(r, 800)); // simulate network
-    // ────────────────────────────────────────────────────────
-
-    form.style.display = 'none';
-    successState.style.display = 'block';
+    try {
+      await insertToSupabase(data);
+      form.style.display = 'none';
+      successState.style.display = 'block';
+    } catch (err) {
+      console.error('Submission error:', err);
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Submit Application';
+      alert('Something went wrong. Please try again.');
+    }
   });
 </script>
 
 </body>
 </html>
-
